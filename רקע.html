@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="he">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>רקע וטקסט מתחלפים</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;700;900&display=swap" rel="stylesheet">
+
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            font-family: 'Heebo', sans-serif;
+            overflow: hidden;
+        }
+        
+        #background-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            transition: background-image 1.5s ease-in-out;
+            background-color: #000; /* רקע שחור כגיבוי */
+            animation: zoom-bg 15s ease-in-out infinite;
+        }
+        
+        /* אנימציות רקע */
+        @keyframes zoom-bg {
+            0%, 100% { 
+                transform: scale(1); 
+            }
+            50% { 
+                transform: scale(1.2); /* הגדלה מ-1.1 ל-1.2 */
+            }
+        }
+        
+        /* אפקט רקע מתנועע */
+        .bg-pan {
+            animation: bg-pan 15s ease-in-out infinite !important; /* מהירות מוגברת מ-20 ל-15 שניות */
+        }
+        
+        @keyframes bg-pan {
+            0%, 100% { 
+                background-position: center;
+            }
+            25% { 
+                background-position: 80% 50%; /* תנועה מודגשת יותר */
+            }
+            50% { 
+                background-position: 50% 80%; /* תנועה מודגשת יותר */
+            }
+            75% { 
+                background-position: 20% 50%; /* תנועה מודגשת יותר */
+            }
+        }
+        
+        /* אפקט רקע עם זום פנימה */
+        .bg-zoom-in {
+            animation: zoom-in 12s ease-in-out infinite !important; /* מהירות מוגברת מ-15 ל-12 שניות */
+        }
+        
+        @keyframes zoom-in {
+            0% { 
+                transform: scale(1);
+            }
+            100% { 
+                transform: scale(1.4); /* הגדלה מ-1.2 ל-1.4 */
+            }
+        }
+        
+        /* אפקט רקע עם זום החוצה */
+        .bg-zoom-out {
+            animation: zoom-out 12s ease-in-out infinite !important; /* מהירות מוגברת מ-15 ל-12 שניות */
+        }
+        
+        @keyframes zoom-out {
+            0% { 
+                transform: scale(1.4); /* הגדלה מ-1.2 ל-1.4 */
+            }
+            100% { 
+                transform: scale(1);
+            }
+        }
+        
+        /* אפקט רקע עם תזוזה קלה ברוח */
+        .bg-floating {
+            animation: floating 20s ease-in-out infinite !important; /* מהירות מוגברת מ-30 ל-20 שניות */
+        }
+        
+        @keyframes floating {
+            0%, 100% { 
+                transform: translateY(0) translateX(0);
+            }
+            25% { 
+                transform: translateY(-2%) translateX(2%); /* הגדלת התנועה פי 2 */
+            }
+            50% { 
+                transform: translateY(2%) translateX(2%); /* הגדלת התנועה פי 2 */
+            }
+            75% { 
+                transform: translateY(2%) translateX(-2%); /* הגדלת התנועה פי 2 */
+            }
+        }
+        
+        #overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.35);
+            z-index: 1;
+        }
+
+        .container {
+            position: absolute;
+            text-align: center;
+            color: white;
+            max-width: 90%;
+            width: 800px;
+            z-index: 10;
+            perspective: 1000px;
+            transition: top 1s ease, left 1s ease, transform 1s ease;
+            
+            /* מרכוז קבוע */
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        /* מיקום מרכזי לכל הסלוגנים */
+        .pos-center {
+            /* מחלקה לא ריקה יותר עם הערה */
+            top: 50% !important;
+            left: 50% !important;
+            transform: translate(-50%, -50%) !important;
+        }
+        
+        /* מיקום בחלק העליון של המסך */
+        .pos-top {
+            top: 2% !important; /* !important כדי לדרוס את ההגדרות ב-container */
+            left: 50% !important;
+            transform: translate(-50%, 0) !important;
+        }
+        
+        /* מיקום בחלק התחתון של המסך */
+        .pos-bottom {
+            top: 98% !important; /* !important כדי לדרוס את ההגדרות ב-container */
+            left: 50% !important;
+            transform: translate(-50%, -100%) !important;
+        }
+
+        #slogan {
+            font-size: 1.2rem;
+            font-weight: 700;
+            background-color: rgba(0, 0, 0, 0.6);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            max-width: 100%;
+            display: inline-block;
+            transition: all 0.5s ease;
+            z-index: 10;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            hyphens: auto;
+        }
+
+        /* הטקסט במסך קטן */
+        @media (max-width: 768px) {
+            #slogan {
+                font-size: 1.1rem;
+                padding: 15px;
+            }
+            
+            .container {
+                max-width: 95%;
+                width: 95%;
+            }
+        }
+        
+        /* מסכים קטנים מאוד */
+        @media (max-width: 480px) {
+            #slogan {
+                font-size: 1rem;
+                padding: 10px;
+            }
+            
+            .container {
+                max-width: 90%;
+                width: 90%;
+            }
+        }
+
+        h1 {
+            font-size: 2.45rem; /* הקטנה של 30% מהגודל המקורי של 3.5rem */
+            line-height: 1.4;
+            font-weight: 900;
+            margin: 0;
+            padding: 22px 28px; /* הקטנה פדינג לשמירה על פרופורציות */
+            color: white;
+            background-color: rgba(0, 0, 0, 0.6);
+            border: 3px solid rgba(255, 255, 255, 0.7);
+            border-radius: 15px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+            letter-spacing: 1.5px; /* הקטנה מתונה של מרווח אותיות */
+            box-shadow: 0 0 30px 10px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+            transform-style: preserve-3d;
+        }
+
+        /* אפקט כהות אוטומטית על רקע כהה */
+        h1.dark-background {
+            background-color: rgba(0, 0, 0, 0.75);
+            border-color: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 0 40px 15px rgba(255, 255, 255, 0.2);
+            text-shadow: 0 2px 6px rgba(0, 0, 0, 1);
+        }
+
+        /* אנימציית כניסה חדשנית לטקסט */
+        .slogan-enter {
+            animation: textEntrance 1.2s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+        }
+        
+        /* אנימציית יציאה לטקסט */
+        .slogan-exit {
+            animation: textExit 0.8s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+        }
+
+        /* הילה סביב הטקסט */
+        h1::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            border-radius: 17px;
+            background: linear-gradient(45deg, 
+                transparent 0%, 
+                rgba(255, 255, 255, 0.1) 45%, 
+                rgba(255, 255, 255, 0.4) 50%, 
+                rgba(255, 255, 255, 0.1) 55%, 
+                transparent 100%);
+            z-index: -1;
+            animation: borderGlow 6s linear infinite;
+        }
+
+        @keyframes textEntrance {
+            0% { 
+                opacity: 0; 
+                transform: rotateX(-30deg) translateY(30px); 
+                filter: blur(10px);
+            }
+            100% { 
+                opacity: 1; 
+                transform: rotateX(0deg) translateY(0); 
+                filter: blur(0);
+            }
+        }
+        
+        @keyframes textExit {
+            0% { 
+                opacity: 1; 
+                transform: rotateX(0deg) translateY(0); 
+                filter: blur(0);
+            }
+            100% { 
+                opacity: 0; 
+                transform: rotateX(30deg) translateY(-30px); 
+                filter: blur(10px);
+            }
+        }
+
+        @keyframes borderGlow {
+            0% { background-position: 0% 0%; }
+            100% { background-position: 200% 0%; }
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8rem; /* הקטנה של גודל הטקסט במובייל */
+                padding: 15px 20px;
+                letter-spacing: 1px;
+            }
+            
+            #slogan {
+                font-size: 0.8rem; /* הקטנה של 20% נוספים במובייל */
+                padding: 8px;
+            }
+            
+            .container {
+                max-width: 95%;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.4rem;
+                padding: 12px;
+                letter-spacing: 0.8px;
+            }
+            
+            .container {
+                max-width: 90%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="background-container"></div>
+    <div id="overlay"></div>
+    <div class="container">
+        <h1 id="slogan">דף נחיתה מוכן תוך 24 שעות!</h1>
+    </div>
+    <canvas id="imageAnalysisCanvas"></canvas>
+
+    <script>
+        // מערכי התוכן
+        const slogans = [
+            "בלי דף נחיתה - אתה לא במשחק",
+            "דף נחיתה שמביא לך לקוחות, לא רק לייקים!",
+            "24 שעות - ואתה באויר!",
+            "כל לקוח שלא רואה אותך - הולך למתחרים",
+            "העתיד של העסק שלך מתחיל כאן!"
+        ];
+
+        // מערך מיקומים קבוע - הסלוגן הראשון עליון, השאר מרכזי
+        const slogan_positions = [
+            'pos-top',         // סלוגן 0 - למעלה (2% מהקצה)
+            'pos-bottom',      // סלוגן 1 - למטה (98% מהקצה)
+            'pos-top',         // סלוגן 2 - למעלה (2% מהקצה)  
+            'pos-bottom',      // סלוגן 3 - למטה (98% מהקצה)
+            'pos-top'          // סלוגן 4 - למעלה (2% מהקצה)
+        ];
+        
+        // תמונות רקע מותאמות למובייל ולתוכן הסלוגנים
+        const backgrounds = [
+            "url('https://raw.githubusercontent.com/VIPOCONNECT/vipo-24/refs/heads/main/images/image1.webp')", // בלי דף נחיתה - אתה לא במשחק
+            "url('https://raw.githubusercontent.com/VIPOCONNECT/vipo-24/refs/heads/main/images/image2.webp')", // דף נחיתה שמביא לך לקוחות
+            "url('https://raw.githubusercontent.com/VIPOCONNECT/vipo-24/refs/heads/main/images/image3.webp')", // 24 שעות - ואתה באויר
+            "url('https://raw.githubusercontent.com/VIPOCONNECT/vipo-24/refs/heads/main/images/image4.webp')", // כל לקוח שלא רואה אותך
+            "url('https://raw.githubusercontent.com/VIPOCONNECT/vipo-24/refs/heads/main/images/image5.webp')" // העתיד של העסק שלך מתחיל כאן
+        ];
+        
+        // תמונות גיבוי במקרה שהעיקריות לא נטענות
+        const fallbackBackgrounds = [
+            "url('https://source.unsplash.com/featured/?webdesign')", // דף נחיתה
+            "url('https://source.unsplash.com/featured/?business')", // העסק שלך
+            "url('https://source.unsplash.com/featured/?marketing')", // לקוחות חדשים
+            "url('https://source.unsplash.com/featured/?finance')", // הגדלת הכנסות
+            "url('https://source.unsplash.com/featured/?programming')" // פתרונות דיגיטליים
+        ];
+
+        // מערך של מיקומים אפשריים - כעת עם מיקומים חדשים
+        const positions = ['pos-center', 'pos-top', 'pos-bottom'];
+        
+        // משתני מצב גלובליים
+        let currentIndex = 0;
+        let timerInterval = null;
+        let usingFallbackImages = false;
+        const bgContainer = document.getElementById("background-container");
+        const sloganContainer = document.querySelector(".container");
+        const sloganElement = document.getElementById("slogan");
+
+        // פונקציה לטעינה מוקדמת של כל התמונות
+        function preloadImages() {
+            // טעינה מוקדמת של כל תמונות הרקע העיקריות
+            for (let i = 0; i < backgrounds.length; i++) {
+                const img = new Image();
+                const bgUrl = backgrounds[i].replace(/url\(['"](.+)['"]\)/, '$1');
+                
+                img.onload = function() {
+                    console.log(`תמונה ${i+1} נטענה בהצלחה: ${bgUrl}`);
+                };
+                
+                img.onerror = function() {
+                    console.error(`שגיאה בטעינת תמונה ${i+1}: ${bgUrl}`);
+                    // במקרה של שגיאה, מחליפים את התמונה הבעייתית בגיבוי
+                    backgrounds[i] = fallbackBackgrounds[i];
+                    console.log(`הוחלפה לתמונת גיבוי: ${fallbackBackgrounds[i]}`);
+                };
+                
+                img.src = bgUrl;
+            }
+            
+            // טעינה מוקדמת של תמונות הגיבוי
+            for (let i = 0; i < fallbackBackgrounds.length; i++) {
+                const img = new Image();
+                const bgUrl = fallbackBackgrounds[i].replace(/url\(['"](.+)['"]\)/, '$1');
+                img.src = bgUrl;
+            }
+        }
+
+        // פונקציה מעודכנת להחלפת סלוגן ורקע
+        function changeSloganAndBackground() {
+            // הבטחת מיקום לפי האינדקס האמיתי של הסלוגן
+            const sloganIndex = currentIndex % slogans.length;
+            console.log(`מציג סלוגן ${sloganIndex} עם מיקום קבוע: ${slogan_positions[sloganIndex]}`);
+            
+            // שלב 1: יציאת הטקסט הנוכחי עם אנימציה
+            sloganElement.classList.remove('slogan-enter');
+            sloganElement.classList.add('slogan-exit');
+            
+            // שלב 2: לאחר סיום אנימציית היציאה, נבצע את כל השינויים
+            setTimeout(() => {
+                try {
+                    // 2.1: עדכון הטקסט עצמו
+                    sloganElement.textContent = slogans[sloganIndex];
+                    
+                    // 2.2: בחירת הרקע המתאים
+                    const bgImagePath = backgrounds[sloganIndex];
+                    const bgImageCleanPath = bgImagePath.replace(/url\(['"](.+)['"]\)/, '$1');
+                    
+                    // 2.3: עדכון המיקום לפי הסלוגן הנוכחי
+                    const positionClass = slogan_positions[sloganIndex];
+                    
+                    // הסרת כל מחלקות המיקום הקודמות
+                    sloganContainer.classList.remove('pos-top', 'pos-center', 'pos-bottom');
+                    // הוספת מחלקת המיקום החדשה
+                    sloganContainer.classList.add(positionClass);
+                    
+                    // 2.4: עדכון dataset לצורך דיבוג
+                    sloganContainer.dataset.currentSlogan = sloganIndex;
+                    sloganContainer.dataset.positionClass = positionClass;
+                    
+                    // 2.5: בדיקת רקע כהה לעיצוב מותאם
+                    const darkBackgrounds = [1, 2]; // אינדקסים של רקעים כהים
+                    const isDarkBackground = darkBackgrounds.includes(sloganIndex);
+                    
+                    if (isDarkBackground) {
+                        sloganElement.classList.add('dark-background');
+                    } else {
+                        sloganElement.classList.remove('dark-background');
+                    }
+                    
+                    // 2.6: טעינת התמונה
+                    const testImg = new Image();
+                    
+                    testImg.onload = function() {
+                        // הסרת כל אנימציות הרקע הקודמות
+                        bgContainer.classList.remove('bg-pan', 'bg-zoom-in', 'bg-zoom-out', 'bg-floating');
+                        
+                        // בחירת אנימציית רקע רנדומלית
+                        const bgAnimations = ['bg-pan', 'bg-zoom-in', 'bg-zoom-out', 'bg-floating'];
+                        const randomAnimation = bgAnimations[Math.floor(Math.random() * bgAnimations.length)];
+                        
+                        // החלפת הרקע ואנימציה
+                        bgContainer.style.backgroundImage = bgImagePath;
+                        bgContainer.classList.add(randomAnimation);
+                        
+                        // הוספת אנימציית הכניסה לאחר שהרקע הוחלף
+                        sloganElement.classList.remove('slogan-exit');
+                        sloganElement.classList.add('slogan-enter');
+                    };
+                    
+                    testImg.onerror = function() {
+                        // הסרת כל אנימציות הרקע הקודמות
+                        bgContainer.classList.remove('bg-pan', 'bg-zoom-in', 'bg-zoom-out', 'bg-floating');
+                        
+                        // בחירת אנימציית רקע רנדומלית
+                        const bgAnimations = ['bg-pan', 'bg-zoom-in', 'bg-zoom-out', 'bg-floating'];
+                        const randomAnimation = bgAnimations[Math.floor(Math.random() * bgAnimations.length)];
+                        
+                        // החלפת הרקע לתמונת גיבוי ואנימציה
+                        bgContainer.style.backgroundImage = fallbackBackgrounds[sloganIndex];
+                        bgContainer.classList.add(randomAnimation);
+                        
+                        // הוספת אנימציית הכניסה גם במקרה של שגיאה
+                        sloganElement.classList.remove('slogan-exit');
+                        sloganElement.classList.add('slogan-enter');
+                    };
+                    
+                    testImg.src = bgImageCleanPath;
+                    
+                } catch (e) {
+                    console.error("שגיאה בעת החלפת סלוגן:", e);
+                }
+                
+                // קידום האינדקס לסלוגן הבא רק בסוף התהליך
+                currentIndex = (currentIndex + 1) % slogans.length;
+            }, 800);
+        }
+        
+        // הפעלה ראשונית
+        function startSlideshow() {
+            console.log("התחלת המצגת");
+            
+            // טעינה מוקדמת של התמונות
+            preloadImages();
+            
+            // קביעת המיקום לסלוגן הראשון
+            sloganContainer.classList.remove('pos-top', 'pos-center', 'pos-bottom');
+            const firstPosition = slogan_positions[0];
+            sloganContainer.classList.add(firstPosition);
+            sloganContainer.dataset.currentSlogan = "0";
+            sloganContainer.dataset.positionClass = firstPosition;
+            
+            // הגדרת הטקסט הראשוני
+            sloganElement.textContent = slogans[0];
+            sloganElement.classList.add('slogan-enter');
+            
+            // בדיקת טעינת התמונה הראשונה
+            const firstImg = new Image();
+            const firstBgUrl = backgrounds[0].replace(/url\(['"](.+)['"]\)/, '$1');
+            
+            firstImg.onload = function() {
+                bgContainer.style.backgroundImage = backgrounds[0];
+            };
+            
+            firstImg.onerror = function() {
+                bgContainer.style.backgroundImage = fallbackBackgrounds[0];
+                usingFallbackImages = true;
+            };
+            
+            firstImg.src = firstBgUrl;
+            
+            // הגדרת טיימר להחלפת תמונות וסלוגנים
+            if (timerInterval) {
+                clearInterval(timerInterval);
+            }
+            
+            // קידום האינדקס כדי שהפעם הבאה תציג את הסלוגן השני
+            currentIndex = 1;
+            
+            // הפעלת הטיימר
+            timerInterval = setInterval(function() {
+                changeSloganAndBackground();
+            }, 3000);
+        }
+        
+        // הוספת מאזין לעומס מלא של העמוד - רק פעם אחת
+        let slideshowStarted = false;
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!slideshowStarted) {
+                startSlideshow();
+                slideshowStarted = true;
+                console.log("DOM fully loaded, slideshow initialized");
+            }
+        });
+
+        // מאזין גיבוי נוסף למקרה שהאירוע הקודם כבר עבר
+        if (document.readyState === 'complete' || document.readyState === 'interactive') {
+            setTimeout(function() {
+                if (!timerInterval) {
+                    console.log("Using backup initializer");
+                    startSlideshow();
+                }
+            }, 100);
+        }
+    </script>
+</body>
+</html>
